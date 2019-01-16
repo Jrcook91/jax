@@ -6,6 +6,17 @@ then
   exit 1
 fi
 
+export PYENV_ROOT="/build/pyenv"
+git clone https://github.com/pyenv/pyenv.git "$PYENV_ROOT"
+export PATH="$PYENV_ROOT/bin:$PATH"
+
+eval "$(pyenv init -)"
+
+PY_VERSION="$1"
+PY_TAG=$(python -c "import wheel; import wheel.pep425tags as t; print(t.get_abbr_impl() + t.get_impl_ver())")
+
+echo "Python version $PY_VERSION; tag $PY_TAG"
+
 git clone https://github.com/google/jax /build/jax
 cd /build/jax/build
 
@@ -19,15 +30,10 @@ then
   usage
 fi
 
-case $1 in
-  py3)
-    update-alternatives --install /usr/bin/python python /usr/bin/python3 10
-    ;;
-  py2)
-    ;;
-  *)
-    usage
-esac
+# Builds and activates a specific Python version.
+pyenv install "$PY_VERSION"
+pyenv local "$PY_VERSION"
+pip install numpy scipy cython setuptools wheel
 
 case $2 in
   cuda-included)
@@ -44,5 +50,5 @@ case $2 in
     usage
 esac
 
-python setup.py bdist_wheel
+python setup.py bdist_wheel --python-tag "$PY_TAG"
 cp -r dist/* /dist
