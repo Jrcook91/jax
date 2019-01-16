@@ -6,7 +6,7 @@ then
   exit 1
 fi
 
-export PYENV_ROOT="/build/pyenv"
+export PYENV_ROOT="/pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
@@ -29,8 +29,6 @@ fi
 # Builds and activates a specific Python version.
 pyenv local "$PY_VERSION"
 
-pip install numpy scipy cython setuptools wheel
-
 PY_TAG=$(python -c "import wheel; import wheel.pep425tags as t; print(t.get_abbr_impl() + t.get_impl_ver())")
 echo "Python tag $PY_TAG"
 
@@ -49,5 +47,5 @@ case $2 in
     usage
 esac
 
-python setup.py bdist_wheel --python-tag "$PY_TAG"
+python setup.py bdist_wheel --python-tag "$PY_TAG" --plat-name "linux_x86_64"
 cp -r dist/* /dist

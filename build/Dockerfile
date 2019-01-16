@@ -13,10 +13,16 @@ WORKDIR /tmp/patchelf
 RUN bash bootstrap.sh && ./configure && make && make install && rm -r /tmp/patchelf
 
 
-RUN git clone https://github.com/pyenv/pyenv.git /build/pyenv
-ENV PYENV_ROOT /build/pyenv
-RUN /build/pyenv/bin/pyenv install 2.7.15
-RUN /build/pyenv/bin/pyenv install 3.7.2
+WORKDIR /
+RUN git clone https://github.com/pyenv/pyenv.git /pyenv
+ENV PYENV_ROOT /pyenv
+RUN /pyenv/bin/pyenv install 2.7.15
+RUN eval "$(/pyenv/bin/pyenv init -)" && /pyenv/bin/pyenv local 2.7.15 && pip install numpy scipy cython setuptools wheel
+RUN /pyenv/bin/pyenv install 3.6.8
+RUN eval "$(/pyenv/bin/pyenv init -)" && /pyenv/bin/pyenv local 3.6.8 && pip install numpy scipy cython setuptools wheel
+RUN /pyenv/bin/pyenv install 3.7.2
+RUN eval "$(/pyenv/bin/pyenv init -)" && /pyenv/bin/pyenv local 3.7.2 && pip install numpy scipy cython setuptools wheel
+
 
 WORKDIR /
 COPY build_wheel_docker_entrypoint.sh /build_wheel_docker_entrypoint.sh
