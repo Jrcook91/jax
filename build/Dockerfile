@@ -12,6 +12,12 @@ RUN git clone https://github.com/nixos/patchelf /tmp/patchelf
 WORKDIR /tmp/patchelf
 RUN bash bootstrap.sh && ./configure && make && make install && rm -r /tmp/patchelf
 
+
+RUN git clone https://github.com/pyenv/pyenv.git /build/pyenv
+ENV PYENV_ROOT /build/pyenv
+RUN /build/pyenv/bin/pyenv install 2.7.15
+RUN /build/pyenv/bin/pyenv install 3.7.2
+
 WORKDIR /
 COPY build_wheel_docker_entrypoint.sh /build_wheel_docker_entrypoint.sh
 RUN chmod +x /build_wheel_docker_entrypoint.sh
