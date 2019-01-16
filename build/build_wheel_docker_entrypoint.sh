@@ -13,9 +13,8 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
 PY_VERSION="$1"
-PY_TAG=$(python -c "import wheel; import wheel.pep425tags as t; print(t.get_abbr_impl() + t.get_impl_ver())")
 
-echo "Python version $PY_VERSION; tag $PY_TAG"
+echo "Python version $PY_VERSION"
 
 git clone https://github.com/google/jax /build/jax
 cd /build/jax/build
@@ -29,6 +28,9 @@ if [[ $# != 2 ]]
 then
   usage
 fi
+
+PY_TAG=$(python -c "import wheel; import wheel.pep425tags as t; print(t.get_abbr_impl() + t.get_impl_ver())")
+echo "Python tag $PY_TAG"
 
 # Builds and activates a specific Python version.
 pyenv install "$PY_VERSION"
