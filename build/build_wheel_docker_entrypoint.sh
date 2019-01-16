@@ -29,12 +29,13 @@ then
   usage
 fi
 
-PY_TAG=$(python -c "import wheel; import wheel.pep425tags as t; print(t.get_abbr_impl() + t.get_impl_ver())")
-echo "Python tag $PY_TAG"
-
 # Builds and activates a specific Python version.
 pyenv install "$PY_VERSION"
 pyenv local "$PY_VERSION"
+
+PY_TAG=$(python -c "import wheel; import wheel.pep425tags as t; print(t.get_abbr_impl() + t.get_impl_ver())")
+echo "Python tag $PY_TAG"
+
 pip install numpy scipy cython setuptools wheel
 
 case $2 in
