@@ -1335,6 +1335,32 @@ class LaxTest(jtu.JaxTestCase):
       self.assertAllClose(cfun(x, num), onp.sum(x[:num]), check_dtypes=False)
       self.assertAllClose(cfun(x, num), onp.sum(x[:num]), check_dtypes=False)
 
+  def testScanAdd(self):
+    def f(x, y):
+      return x + y
+
+    g = partial(lax.scan, f)
+    a = onp.array(7, onp.float32)
+    bs = onp.array([2, 4, -2, 6], onp.float32)
+    out = g(a, bs)
+    self.assertAllClose(out, onp.array([9, 13, 11, 17], onp.float32),
+                        check_dtypes=True)
+
+    jtu.check_jvp(g, partial(api.jvp, g), (a, bs))
+
+  def testScanMul(self):
+    def f(x, y):
+      return x * y
+
+    g = partial(lax.scan, f)
+    a = onp.array(7, onp.float32)
+    bs = onp.array([2, 4, -2, 6], onp.float32)
+    out = g(a, bs)
+    self.assertAllClose(out, onp.array([14, 56, -112, -672], onp.float32),
+                        check_dtypes=True)
+
+    jtu.check_jvp(g, partial(api.jvp, g), (a, bs))
+
   @parameterized.named_parameters(jtu.cases_from_list(
       {"testcase_name": "_lhs_shape={}_rhs_shape={}"
        .format(jtu.format_shape_dtype_string(lhs_shape, dtype),
